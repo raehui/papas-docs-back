@@ -1,16 +1,20 @@
 package com.example.news.back.repository;
 
-import com.example.news.back.entity.Users;
+import com.example.news.back.dto.DocsUserDto;
+import com.example.news.back.entity.DocsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.sql.ClientInfoStatus;
-import java.util.List;
 
 /*
     아래와 같은 선언만으로 UsersRepository 인터페이스 구현 클래스로 생성된 객체가 bean으로 관리됨.
     상속받는 순간 inser,update 메소드 사용 가능
  */
-public interface UsersRepository extends JpaRepository<Users,Long> {
+public interface DocsUserRepository extends JpaRepository<DocsUser,Long> {
+
+    public DocsUser getDocsUserByName(String name);
+
+    String name(String name);
+
+
     /*
         정렬된 결과를 select 하는 메소드를 custom으로 추가 가능
         단, 정해진 형식이 존재!
@@ -37,5 +41,8 @@ public interface UsersRepository extends JpaRepository<Users,Long> {
 	        @Query(value = "SELECT m FROM Users u ORDER BY u.userId DESC")
 	        public List<Member> getList(); // 메소드명은 마음대로 규칙없이
      */
+
+
+
 
 }
