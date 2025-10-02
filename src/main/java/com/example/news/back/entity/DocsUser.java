@@ -17,8 +17,9 @@ public class DocsUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
-
-    @Column(nullable = false, length = 100)
+    
+    // id라고 가정
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
     @Column(nullable = false, length = 50)
@@ -35,6 +36,8 @@ public class DocsUser {
     private LocalDateTime createdAt;
 
     // dto을 entity 로 변환하는 static 메서드
+    // 서비스에서 DB로 보낼 때 DTO-> entity
+    // 클라이언트 -> DB 로의 방향에만 사용된다.
     public static DocsUser toEntity(DocsUserDto docsUserDto) {
         return DocsUser.builder()
                 //.userId(docsUserDto.getUserId()) DB에서 자동 생성

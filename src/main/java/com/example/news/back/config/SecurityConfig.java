@@ -1,5 +1,8 @@
 package com.example.news.back.config;
 
+import com.example.news.back.filter.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,11 +17,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration // 설정 클래스
 @EnableWebSecurity // Spring Security를 활성화
 @EnableMethodSecurity(securedEnabled = true) // Controller 메소드 단위로 권한 체크 가능
 public class SecurityConfig {
+
+    // jwt 를 쿠키로 저장할 때 쿠키의 이름
+    @Value("${jwt.name}")
+    private String jwtName;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     /*
        1. 나의 서비스에 맞는 설정을 만들어 시큐리티 체인을 생성
@@ -26,7 +37,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // 인증 필요없는  경로
-        String[] whiteList = {"/docs/**"};
+        String[] whiteList = {"/join/**"};
 
         httpSecurity
                 // 동일한 도메인에서 오는 iframe 허용
@@ -41,12 +52,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(config ->
                         config
                                 .requestMatchers(whiteList).permitAll()
+                                .anyRequest().authenticated()
+
                 )
                 // 세션을 사용하지 않고, 각 요청마다 인증 정보를 확인하도록 설정
                 // JWT 토큰을 사용하기 위해서 설정함
                 .sessionManagement(config ->
                         config.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                )
+                // JWTfilter 를 Spring Security 필터보다 미리 수행되게 하기
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        // 설정 정보를 가지고 있는 HttpSecurity 객체의 build() 메소드를 호출해서 객체 리런
         return httpSecurity.build();
     }
 

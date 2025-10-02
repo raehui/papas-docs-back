@@ -23,11 +23,16 @@ public class DocsUserServiceImpl implements DocsUserService {
         String password =  passwordEncoder.encode(docsUserDto.getPassword());
         docsUserDto.setPassword(password);
         // dto를 entity로 변경해서 저장하기
+        // save는 자동으로 제공되기에 따로 설정 필요 없음
         docsUserRepository.save(DocsUser.toEntity(docsUserDto));
     }
-
-    // 로그인
     
-    // 비밀번호 확인
+    // 로그인
+    @Override
+    public void loginDocsUser(DocsUserDto docsUserDto) {
+        docsUserRepository.getDocsUsersByEmail(docsUserDto.getEmail());
+    }
+
+
 
 }

@@ -6,6 +6,6 @@ public interface DocsUserService {
     // 회원가입
     public void joinDocsUser(DocsUserDto docsUserDto);
     // 로그인
-
+    public void loginDocsUser(DocsUserDto docsUserDto);
 
 }

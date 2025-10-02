@@ -1,5 +1,6 @@
 package com.example.news.back.filter;
 
+import com.example.news.back.service.CustomDocuUserDetailService;
 import com.example.news.back.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -27,21 +28,33 @@ import java.nio.charset.StandardCharsets;
 
 /*
 
-    
+
  */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     JwtUtil jwtUtil;
 
-    // 쿠키에 저장된 token 의 이름
+    // 쿠키에 저장된 token의 이름
     @Value("${jwt.name}")
     String jwtName;
+
+    @Autowired
+    CustomDocuUserDetailService service;
 
     // 모든 요청이 올 때 토큰을 추출
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String path = request.getRequestURI();
+        System.out.println("요청경로:"+path);
+
+        //  회원가입, 로그인은 JWT 검증 안 하고 그냥 통과
+        if (path.startsWith("/docs/join")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String jwtToken = "";
 
         // 쿠키에서 토큰 추출
@@ -56,6 +69,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         }
+
 
         // 만일 쿠키에서 추출된 토큰이 없다면
         if (jwtToken.equals("")) {
