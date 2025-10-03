@@ -43,7 +43,7 @@ public class JwtUtil {
 
     // 토큰에서 사용자 이름 추출
     // :: 파라미터로 들어온 객체의 메서드만 호출하는 경우 사용함.
-    public String extractName(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 

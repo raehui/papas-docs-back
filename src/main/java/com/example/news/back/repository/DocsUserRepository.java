@@ -5,18 +5,16 @@ import com.example.news.back.entity.DocsUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
     아래와 같은 선언만으로 UsersRepository 인터페이스 구현 클래스로 생성된 객체가 bean으로 관리됨.
     상속받는 순간 inser,update 메소드 사용 가능
  */
 public interface DocsUserRepository extends JpaRepository<DocsUser,Long> {
+    // 이메일로 유저 조회하기
+    public DocsUser findByEmail(String email);
 
-    public DocsUser getDocsUserByName(String name);
-
-    String name(String name);
-
-    public DocsUser getDocsUsersByEmail(String email);
 
 
     /*

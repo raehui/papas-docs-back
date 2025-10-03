@@ -23,15 +23,13 @@ public class CustomDocuUserDetailService implements UserDetailsService {
     @Autowired
     private DocsUserRepository repository;
 
-    // name 을 전달하면 해당 user의 자세한 정보를 리턴하는 메소드
-    // 엔티티에서 받아온 데이터
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        DocsUser docsUser = repository.getDocsUserByName(name);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        DocsUser docsUser = repository.findByEmail(email);
 
-        // 만일 존재하지 않는 사용자라면
+         // 만일 존재하지 않는 사용자라면
         if(docsUser == null){
-            throw new UsernameNotFoundException("존재 하지 않는 사용자 입니다."+ name);
+            throw new UsernameNotFoundException("존재 하지 않는 사용자 입니다."+ email);
         }
 
         //권한 목록을 List 에 담아서  (지금은 1개 이지만)
@@ -39,8 +37,34 @@ public class CustomDocuUserDetailService implements UserDetailsService {
         //DB 에 저장된 role 정보에는 ROLE_ 가 붙어 있지 않다.
         authList.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        UserDetails ud = new User(docsUser.getName(),docsUser.getPassword(),authList );
+        UserDetails ud = new User(docsUser.getEmail(),docsUser.getPassword(),authList );
 
         return ud;
     }
+
+
+
+
+    // name 을 전달하면 해당 user의 자세한 정보를 리턴하는 메소드
+    // 엔티티에서 받아온 데이터
+//    @Override
+//    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+//        DocsUser docsUser = repository.getDocsUserByName(name);
+//
+//        // 만일 존재하지 않는 사용자라면
+//        if(docsUser == null){
+//            throw new UsernameNotFoundException("존재 하지 않는 사용자 입니다."+ name);
+//        }
+//
+//        //권한 목록을 List 에 담아서  (지금은 1개 이지만)
+//        List<GrantedAuthority> authList=new ArrayList<>();
+//        //DB 에 저장된 role 정보에는 ROLE_ 가 붙어 있지 않다.
+//        authList.add(new SimpleGrantedAuthority("ROLE_USER"));
+//
+//        UserDetails ud = new User(docsUser.getName(),docsUser.getPassword(),authList );
+//
+//        return ud;
+//    }
+
+
 }

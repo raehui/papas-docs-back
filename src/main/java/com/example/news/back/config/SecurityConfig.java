@@ -37,7 +37,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // 인증 필요없는  경로
-        String[] whiteList = {"/join/**"};
+        String[] whiteList = {"/join/**", "/login"};
 
         httpSecurity
                 // 동일한 도메인에서 오는 iframe 허용

@@ -30,7 +30,7 @@ public class DocsUserServiceImpl implements DocsUserService {
     // 로그인
     @Override
     public void loginDocsUser(DocsUserDto docsUserDto) {
-        docsUserRepository.getDocsUsersByEmail(docsUserDto.getEmail());
+        docsUserRepository.findByEmail(docsUserDto.getEmail());
     }
 
 

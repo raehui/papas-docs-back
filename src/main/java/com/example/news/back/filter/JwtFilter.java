@@ -49,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         System.out.println("요청경로:"+path);
 
-        //  회원가입, 로그인은 JWT 검증 안 하고 그냥 통과
+        //  회원가입 JWT 검증 안 하고 그냥 통과
         if (path.startsWith("/docs/join")) {
             filterChain.doFilter(request, response);
             return;
@@ -70,7 +70,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-
         // 만일 쿠키에서 추출된 토큰이 없다면
         if (jwtToken.equals("")) {
             //요청의 Header 에 "Authorization" 이라는 키값으로 전달된 문자열이 있는지 읽어와 본다. ?
@@ -80,17 +79,17 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        String userName = null;
+        String userEmail = null;
         if (jwtToken.startsWith("Bearer ")) {
             // "Bearer " 를 제외한 뒤의 token 문자열을 얻어낸다.
             jwtToken = jwtToken.substring(7);
             // userName 을 token 으로 부터 얻어낸다.
-            userName = jwtUtil.extractName(jwtToken);
+            userEmail = jwtUtil.extractEmail(jwtToken);
         }
-        //토큰에서 뽑은 userName
-        //userName 이 존재하고  Spring Security 에서 아직 인증을 받지 않은 상태라면
+        //토큰에서 뽑은 useremail
+        //useremail 이 존재하고  Spring Security 에서 아직 인증을 받지 않은 상태라면
         //DB를 찾지않고 토큰으로
-        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             //토큰이 유효한 토큰인지 체크한 다음
             boolean isValid = jwtUtil.validateToken(jwtToken);
             //유효한다면 1회성 로그인 (spring security 를 통과할 로그인)을 시켜준다.
@@ -99,7 +98,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.extractAllClaims(jwtToken); // JWT에서 모든 정보 가져오기
                 String role = claims.get("role", String.class);
                 // userName 과 role 정보를 담은 UserDetails 객체를 만든다.
-                UserDetails ud = User.withUsername(userName)
+                UserDetails ud = User.withUsername(userEmail)
                         .password("") // 비밀번호는 필요없지만 null 인 상태면 builder 에서 에러 발생
                         .authorities(role)
                         .build();
